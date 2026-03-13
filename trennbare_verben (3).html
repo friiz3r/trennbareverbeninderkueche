@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lessons with Slawa - Trennbare Verben</title>
+<style>
+:root {
+  --bg: #faf5eb; --bg2: #f2e8d0; --card: #ffffff;
+  --text: #2c1a0e; --text2: #7a5c4a;
+  --accent: #b5341e; --green: #4a7c59; --orange: #d4752a;
+  --border: #e0ccaf; --shadow: rgba(44,26,14,0.12); --dark: #3d2314;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Georgia, Palatino, serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+header { background: var(--dark); color: var(--bg); padding: 1.4rem 2rem; text-align: center; border-bottom: 4px solid var(--orange); }
+.h-title { font-size: 1.7rem; letter-spacing: 0.04em; color: #f5e8c8; }
+.h-sub   { font-size: 0.88rem; color: #b09070; font-style: italic; margin-top: 0.2rem; }
+nav { display: flex; justify-content: center; background: var(--bg2); border-bottom: 2px solid var(--border); padding: 0 1rem; overflow-x: auto; }
+.tab-btn { padding: 0.8rem 1.4rem; background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; font-family: Georgia, serif; font-size: 0.92rem; color: var(--text2); transition: all .2s; white-space: nowrap; }
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,.45); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--card); font-weight: bold; }
+main { max-width: 920px; margin: 0 auto; padding: 1.8rem 1rem 3rem; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeUp .3s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.section-title { font-size: 1.3rem; border-bottom: 2px solid var(--border); padding-bottom: .4rem; margin-bottom: .4rem; }
+.section-hint  { font-size: .85rem; color: var(--text2); font-style: italic; margin-bottom: 1.4rem; }
+/* Table */
+.ref-wrap { margin-bottom: 2rem; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.ref-table th { background: var(--dark); color: var(--bg); padding: .5rem .8rem; text-align: left; font-weight: normal; font-style: italic; }
+.ref-table td { padding: .48rem .8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.ref-table tr:nth-child(even) td { background: rgba(255,255,255,.55); }
+.ref-table tr:hover td { background: rgba(212,117,42,.08); }
+.pfx { color: var(--accent); font-weight: bold; }
+.meaning-cell { color: var(--text2); font-style: italic; }
+/* Cards */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.3rem; margin-top: .5rem; }
+.flashcard { height: 185px; perspective: 900px; cursor: pointer; }
+.fc-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.45,.05,.55,.95); border-radius: 12px; }
+.flashcard.flipped .fc-inner { transform: rotateY(180deg); }
+.fc-front, .fc-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; padding: 1.1rem 1.25rem; box-shadow: 0 3px 16px var(--shadow); border: 1.5px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
+.fc-front { background: var(--card); align-items: center; text-align: center; }
+.fc-back  { background: linear-gradient(140deg,#3d2314,#5c3520); color: #f5e8c8; transform: rotateY(180deg); border-color: transparent; }
+.fc-emoji  { font-size: 2rem; margin-bottom: .4rem; }
+.fc-verb   { font-size: 1.6rem; font-weight: bold; }
+.fc-prefix { color: var(--accent); }
+.fc-flip   { font-size: .65rem; color: #bbb; margin-top: auto; font-style: italic; }
+.bk-meaning { font-size: 1.1rem; font-weight: bold; color: #f5c842; margin-bottom: .45rem; }
+.bk-conj    { font-size: .78rem; color: #b09070; margin-bottom: .45rem; font-style: italic; }
+.bk-example { font-size: .88rem; color: #d8c8b0; font-style: italic; line-height: 1.45; }
+/* Lückentext */
+.lt-scorebar { display: flex; align-items: center; gap: 1rem; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: .8rem 1.2rem; margin-bottom: 1.4rem; box-shadow: 0 2px 8px var(--shadow); }
+.lt-score-num { font-size: 2rem; font-weight: bold; color: var(--accent); min-width: 2.5rem; text-align: center; }
+.lt-score-lbl { font-size: .85rem; color: var(--text2); font-style: italic; }
+.exercises { display: flex; flex-direction: column; gap: 1.1rem; }
+.ex-item { background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 1.15rem 1.4rem; box-shadow: 0 2px 8px var(--shadow); transition: border-color .3s, background .3s; }
+.ex-item.ok { border-color: var(--green); background: #f2faf5; }
+.ex-item.no { border-color: var(--accent); background: #fdf0ef; }
+.ex-no   { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); margin-bottom: .5rem; }
+.ex-sent { font-size: 1.05rem; line-height: 1.9; color: var(--text); }
+.blank-input { display: inline-block; border: none; border-bottom: 2px solid var(--orange); background: transparent; font-family: Georgia, serif; font-size: 1rem; color: var(--text); width: 90px; text-align: center; padding: .05rem .2rem; outline: none; transition: border-color .2s; vertical-align: baseline; }
+.blank-input.wide { width: 110px; }
+.blank-input:focus { border-bottom-color: var(--accent); }
+.blank-input.inp-ok { border-bottom-color: var(--green); color: var(--green); font-weight: bold; }
+.blank-input.inp-no { border-bottom-color: var(--accent); color: var(--accent); }
+.ex-hint { font-size: .78rem; color: var(--text2); font-style: italic; margin-top: .45rem; }
+.ex-hint strong { color: var(--text); font-style: normal; }
+.ex-fb { font-size: .82rem; font-weight: bold; margin-top: .45rem; display: none; }
+.ex-fb.show { display: block; }
+.ex-fb.ok { color: var(--green); }
+.ex-fb.no { color: var(--accent); }
+.lt-actions { margin-top: 1.5rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+.btn-check, .btn-reset, .btn-showall { padding: .55rem 1.3rem; border-radius: 6px; cursor: pointer; font-family: Georgia, serif; font-size: .88rem; border: 1.5px solid transparent; transition: all .2s; }
+.btn-check   { background: var(--dark); color: var(--bg); }
+.btn-check:hover   { background: var(--accent); }
+.btn-reset   { background: transparent; border-color: var(--border); color: var(--text2); }
+.btn-reset:hover   { border-color: var(--text2); color: var(--text); }
+.btn-showall { background: transparent; border-color: var(--green); color: var(--green); }
+.btn-showall:hover { background: var(--green); color: #fff; }
+/* Quiz */
+.quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+.quiz-prog { font-size: .85rem; color: var(--text2); font-style: italic; }
+.quiz-prog-bar-wrap { height: 6px; background: var(--bg2); border-radius: 3px; flex: 1; margin: 0 1rem; }
+.quiz-prog-bar { height: 6px; background: var(--orange); border-radius: 3px; transition: width .4s; }
+.quiz-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.8rem 2rem; box-shadow: 0 4px 24px var(--shadow); max-width: 700px; margin: 0 auto; }
+.q-type-tag { font-size: .65rem; text-transform: uppercase; letter-spacing: .07em; color: var(--orange); margin-bottom: .6rem; }
+.q-text { font-size: 1.15rem; line-height: 1.55; margin-bottom: .35rem; color: var(--text); }
+.q-ctx  { font-size: .82rem; color: var(--text2); font-style: italic; margin-bottom: 1.3rem; }
+.q-options { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 1.3rem; }
+.opt-btn { background: var(--bg2); border: 1.5px solid var(--border); border-radius: 8px; padding: .8rem 1.1rem; cursor: pointer; font-family: Georgia, serif; font-size: .97rem; color: var(--text); text-align: left; transition: all .2s; }
+.opt-btn:hover:not(:disabled) { background: #fff; border-color: var(--orange); transform: translateX(4px); }
+.opt-btn.opt-correct { background: #e8f6ee; border-color: var(--green); color: #2d6645; }
+.opt-btn.opt-wrong   { background: #fdf0ef; border-color: var(--accent); color: var(--accent); }
+.opt-btn:disabled { cursor: default; transform: none; }
+.q-explanation { padding: .8rem 1rem; border-radius: 8px; font-size: .88rem; line-height: 1.5; margin-bottom: 1.1rem; display: none; }
+.q-explanation.show { display: block; }
+.q-explanation.exp-ok { background: #e8f6ee; color: #2d6645; border-left: 4px solid var(--green); }
+.q-explanation.exp-no { background: #fdf0ef; color: #8b2010; border-left: 4px solid var(--accent); }
+.quiz-nav { display: flex; justify-content: flex-end; }
+.btn-next { background: var(--dark); color: var(--bg); padding: .65rem 2rem; border: none; border-radius: 7px; cursor: pointer; font-family: Georgia, serif; font-size: .95rem; transition: background .2s; }
+.btn-next:hover { background: var(--accent); }
+.btn-next:disabled { background: var(--border); color: var(--text2); cursor: default; }
+/* Score screen */
+.score-screen { text-align: center; padding: 2.5rem 1rem; display: none; }
+.score-screen.show { display: block; animation: fadeUp .4s ease; }
+.final-emoji { font-size: 3.5rem; margin-bottom: .5rem; }
+.final-num   { font-size: 4.5rem; font-weight: bold; color: var(--accent); line-height: 1; }
+.final-denom { font-size: 1.2rem; color: var(--text2); margin-bottom: .5rem; }
+.stars       { font-size: 2.5rem; margin: .5rem 0 1.5rem; letter-spacing: .15em; }
+.final-msg   { font-size: 1rem; color: var(--text2); font-style: italic; margin-bottom: 2rem; }
+.btn-restart { background: var(--dark); color: var(--bg); padding: .85rem 2.8rem; border: none; border-radius: 8px; cursor: pointer; font-family: Georgia, serif; font-size: 1rem; transition: background .2s; }
+.btn-restart:hover { background: var(--green); }
+@media(max-width:600px){
+  .h-title { font-size: 1.25rem; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .tab-btn { padding: .7rem .8rem; font-size: .78rem; }
+  .quiz-card { padding: 1.2rem 1rem; }
+  main { padding: 1.2rem .7rem 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-title">Trennbare Verben in der Küche</div>
+  <div class="h-sub">Lessons with Slawa &nbsp;&middot;&nbsp; Deutsch lernen</div>
+</header>
+
+<nav>
+  <button class="tab-btn active" data-tab="vokabeln">📚 Wortschatz</button>
+  <button class="tab-btn" data-tab="lueckentext">✏️ Lückentext</button>
+  <button class="tab-btn" data-tab="quiz">🎯 Quiz</button>
+</nav>
+
+<main>
+
+<div id="vokabeln" class="tab-pane active">
+  <h2 class="section-title">Wortschatz – 11 Trennbare Verben</h2>
+  <p class="section-hint">Klicke auf eine Karte, um die Bedeutung und ein Beispiel zu sehen.</p>
+  <div class="ref-wrap">
+    <table class="ref-table">
+      <thead><tr><th>Verb</th><th>Vorsilbe</th><th>Значение</th><th>Beispiel</th></tr></thead>
+      <tbody id="ref-table-body"></tbody>
+    </table>
+  </div>
+  <div class="cards-grid" id="cards-container"></div>
+</div>
+
+<div id="lueckentext" class="tab-pane">
+  <h2 class="section-title">Lückentext – Ergänze das Verb</h2>
+  <p class="section-hint">Fülle beide Lücken aus: die konjugierte Verbform <strong>und</strong> die Vorsilbe am Satzende. Das Infinitiv steht als Hilfe in Klammern.</p>
+  <div class="lt-scorebar">
+    <div class="lt-score-num" id="lt-score">0</div>
+    <div>
+      <div class="lt-score-lbl">von <span id="lt-total">0</span> richtig</div>
+      <div class="lt-score-lbl" id="lt-status">Noch nicht geprüft</div>
+    </div>
+  </div>
+  <div class="exercises" id="exercises-container"></div>
+  <div class="lt-actions">
+    <button class="btn-check"   id="btn-check-all">Alles prüfen</button>
+    <button class="btn-reset"   id="btn-reset-all">Zurücksetzen</button>
+    <button class="btn-showall" id="btn-show-all">Lösungen anzeigen</button>
+  </div>
+</div>
+
+<div id="quiz" class="tab-pane">
+  <h2 class="section-title">Quiz – Teste dein Wissen</h2>
+  <p class="section-hint">15 Fragen zu Bedeutung, Grammatik und Anwendung der trennbaren Verben.</p>
+  <div id="quiz-main">
+    <div class="quiz-header">
+      <span class="quiz-prog" id="q-prog-text">Frage 1 / 15</span>
+      <div class="quiz-prog-bar-wrap"><div class="quiz-prog-bar" id="q-prog-bar" style="width:0%"></div></div>
+      <span class="quiz-prog" id="q-score-live">0 richtig</span>
+    </div>
+    <div class="quiz-card">
+      <div class="q-type-tag" id="q-type"></div>
+      <div class="q-text"     id="q-text"></div>
+      <div class="q-ctx"      id="q-ctx"></div>
+      <div class="q-options"  id="q-options"></div>
+      <div class="q-explanation" id="q-explanation"></div>
+      <div class="quiz-nav">
+        <button class="btn-next" id="btn-next" disabled>Weiter &rarr;</button>
+      </div>
+    </div>
+  </div>
+  <div class="score-screen" id="score-screen">
+    <div class="final-emoji" id="final-emoji"></div>
+    <div class="final-num"   id="final-num"></div>
+    <div class="final-denom">von 15 Fragen richtig</div>
+    <div class="stars"       id="final-stars"></div>
+    <div class="final-msg"   id="final-msg"></div>
+    <button class="btn-restart" id="btn-restart">🔄 Nochmal versuchen</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+(function () {
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+var DATA = [
+  {
+    name: "einkaufen", prefix: "ein", base: "kaufen", emoji: "🛒",
+    meaning: "покупать продукты / делать покупки",
+    conj: "ich kaufe…ein | du kaufst…ein | er/sie kauft…ein",
+    ex: "Ich kaufe jeden Samstag frisches Gemüse ein."
+  },
+  {
+    name: "mitbringen", prefix: "mit", base: "bringen", emoji: "🛍️",
+    meaning: "приносить (с собой)",
+    conj: "ich bringe…mit | du bringst…mit | er/sie bringt…mit",
+    ex: "Du bringst bitte Wein zur Party mit."
+  },
+  {
+    name: "mitnehmen", prefix: "mit", base: "nehmen", emoji: "🥡",
+    meaning: "брать с собой / еда на вынос",
+    conj: "ich nehme…mit | du nimmst…mit | er/sie nimmt…mit",
+    ex: "Ich nehme mein Mittagessen zur Arbeit mit."
+  },
+  {
+    name: "wegwerfen", prefix: "weg", base: "werfen", emoji: "🗑️",
+    meaning: "выбрасывать",
+    conj: "ich werfe…weg | du wirfst…weg | er/sie wirft…weg",
+    ex: "Wirf die alten Lebensmittel bitte weg!"
+  },
+  {
+    name: "zumachen", prefix: "zu", base: "machen", emoji: "🚪",
+    meaning: "закрывать",
+    conj: "ich mache…zu | du machst…zu | er/sie macht…zu",
+    ex: "Mach bitte den Kühlschrank zu!"
+  },
+  {
+    name: "aufmachen", prefix: "auf", base: "machen", emoji: "🫙",
+    meaning: "открывать",
+    conj: "ich mache…auf | du machst…auf | er/sie macht…auf",
+    ex: "Mach bitte die Konservendose auf!"
+  },
+  {
+    name: "vorbereiten", prefix: "vor", base: "bereiten", emoji: "🥗",
+    meaning: "готовить / подготавливать",
+    conj: "ich bereite…vor | du bereitest…vor | er/sie bereitet…vor",
+    ex: "Ich bereite das Abendessen gerne vor."
+  },
+  {
+    name: "abschneiden", prefix: "ab", base: "schneiden", emoji: "🔪",
+    meaning: "отрезать / нарезать",
+    conj: "ich schneide…ab | du schneidest…ab | er/sie schneidet…ab",
+    ex: "Schneide bitte die Enden der Bohnen ab!"
+  },
+  {
+    name: "anmachen", prefix: "an", base: "machen", emoji: "🔥",
+    meaning: "включать",
+    conj: "ich mache…an | du machst…an | er/sie macht…an",
+    ex: "Mach bitte den Herd an!"
+  },
+  {
+    name: "ausmachen", prefix: "aus", base: "machen", emoji: "🕯️",
+    meaning: "выключать",
+    conj: "ich mache…aus | du machst…aus | er/sie macht…aus",
+    ex: "Das Essen ist fertig. Mach den Backofen aus!"
+  },
+  {
+    name: "aufwärmen", prefix: "auf", base: "wärmen", emoji: "♨️",
+    meaning: "разогревать",
+    conj: "ich wärme…auf | du wärmst…auf | er/sie wärmt…auf",
+    ex: "Ich wärme die Suppe auf."
+  }
+];
+
+// ── LÜCKENTEXT  (two blanks: conjugated verb  +  prefix) ──────────────────
+// s1 = before verb blank | v = answer for verb blank
+// s2 = between blanks    | p = answer for prefix blank
+// s3 = after prefix blank | inf = infinitive shown as hint
+var EXERCISES = [
+  { s1:"Ich",                                   v:"kaufe",    s2:"heute frisches Obst im Supermarkt",  p:"ein",  s3:".",  inf:"einkaufen" },
+  { s1:"Ich",                                   v:"bringe",   s2:"bitte Wein zur Party",               p:"mit",  s3:"!",  inf:"mitbringen" },
+  { s1:"Ich",                                   v:"nehme",    s2:"mein Mittagessen zur Arbeit",        p:"mit",  s3:".",  inf:"mitnehmen" },
+  { s1:"Diese alten Zwiebeln sind schlecht.",   v:"Wirf",     s2:"sie bitte",                          p:"weg",  s3:"!",  inf:"wegwerfen" },
+  { s1:"Bitte",                                 v:"mach",     altV:"mache", s2:"den Kühlschrank",                    p:"zu",   s3:"!",  inf:"zumachen" },
+  { s1:"Bitte",                                 v:"mach",     altV:"mache", s2:"das Marmeladenglas",                 p:"auf",  s3:"!",  inf:"aufmachen" },
+  { s1:"Ich",                                   v:"bereite",  s2:"das Abendessen schon",               p:"vor",  s3:".",  inf:"vorbereiten" },
+  { s1:"Bitte",                                 v:"schneide", s2:"die Enden der Möhren",               p:"ab",   s3:"!",  inf:"abschneiden" },
+  { s1:"Es ist kalt in der Küche. Bitte",       v:"mach",     altV:"mache", s2:"den Herd",                           p:"an",   s3:"!",  inf:"anmachen" },
+  { s1:"Das Essen ist fertig.",                 v:"mach",     altV:"mache", s2:"den Backofen",                       p:"aus",  s3:"!",  inf:"ausmachen" },
+  { s1:"Die Suppe ist noch im Kühlschrank. Ich",v:"wärme",    s2:"sie",                                p:"auf",  s3:".",  inf:"aufwärmen" }
+];
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────
+var QUIZ = [
+  { type:"Bedeutung", q:"Was bedeutet 'einkaufen'?", ctx:"", correct:1,
+    opts:["kochen und essen","покупать продукты / делать покупки","выбрасывать","разогревать"],
+    exp:"'Einkaufen' bedeutet покупать продукты — im Supermarkt oder auf dem Markt." },
+  { type:"Bedeutung", q:"Was bedeutet 'aufwärmen'?", ctx:"", correct:2,
+    opts:["открывать","включать","разогревать","подготавливать"],
+    exp:"'Aufwärmen' bedeutet разогревать — zum Beispiel Suppe oder Reste vom Vortag." },
+  { type:"Grammatik", q:"Welcher Satz ist grammatisch richtig?", ctx:"Trennbare Verben: Die Vorsilbe steht am Ende des Hauptsatzes.", correct:2,
+    opts:["Ich zumache die Tür.","Die Tür ich mache zu.","Ich mache die Tür zu.","Ich zu mache die Tür."],
+    exp:"Richtig: 'Ich mache die Tür zu.' Die Vorsilbe 'zu' steht immer am Satzende." },
+  { type:"Situation", q:"Was machst du, wenn die Suppe kalt ist?", ctx:"Die Suppe ist kalt und du möchtest sie essen.", correct:3,
+    opts:["Ich bereite sie vor.","Ich werfe sie weg.","Ich schneide sie ab.","Ich wärme sie auf."],
+    exp:"'Aufwärmen' passt hier: Ich wärme die Suppe auf." },
+  { type:"Bedeutung", q:"Was bedeutet 'wegwerfen'?", ctx:"", correct:1,
+    opts:["закрывать","выбрасывать","открывать","нарезать"],
+    exp:"'Wegwerfen' bedeutet выбрасывать — etwas in den Müll werfen." },
+  { type:"Grammatik", q:"Welcher Satz benutzt 'vorbereiten' richtig?", ctx:"", correct:0,
+    opts:["Ich bereite das Frühstück vor.","Ich vorbereite das Frühstück.","Ich das Frühstück bereite vor.","Das Frühstück vorbereite ich gerne."],
+    exp:"Richtig: 'Ich bereite das Frühstück vor.' Die Vorsilbe 'vor-' wandert ans Ende." },
+  { type:"Bedeutung", q:"Was bedeutet 'aufmachen'?", ctx:"", correct:2,
+    opts:["закрывать","выбрасывать","открывать","включать"],
+    exp:"'Aufmachen' bedeutet открывать — eine Dose, eine Flasche oder den Kühlschrank." },
+  { type:"Situation", q:"Der Herd ist noch an nach dem Kochen. Was sagst du?", ctx:"Das Essen ist fertig auf dem Tisch.", correct:1,
+    opts:["Mach den Herd an!","Mach den Herd aus!","Bereite den Herd vor!","Wärme den Herd auf!"],
+    exp:"'Ausmachen' bedeutet выключать. Richtig: Mach den Herd aus!" },
+  { type:"Bedeutung", q:"Was bedeutet 'vorbereiten'?", ctx:"", correct:0,
+    opts:["готовить / подготавливать","покупать","выбрасывать","разогревать"],
+    exp:"'Vorbereiten' bedeutet готовить / подготавливать — zum Beispiel das Abendessen vorbereiten." },
+  { type:"Grammatik", q:"Welcher Satz ist richtig? (einkaufen)", ctx:"", correct:3,
+    opts:["Ich einkaufe am Montag.","Ich kaufen ein am Montag.","Am Montag einkaufe ich.","Ich kaufe am Montag ein."],
+    exp:"Richtig: 'Ich kaufe am Montag ein.' Die Vorsilbe 'ein' geht ans Satzende." },
+  { type:"Situation", q:"Du kochst Gemüsesuppe. Die Karotten sind zu groß. Was machst du?", ctx:"Die Karotten passen nicht in den Topf.", correct:2,
+    opts:["Ich werfe sie weg.","Ich mache sie zu.","Ich schneide sie ab.","Ich mache sie an."],
+    exp:"'Abschneiden' bedeutet отрезать / нарезать. Ich schneide die Karotten ab." },
+  { type:"Bedeutung", q:"Was bedeutet 'anmachen' in der Küche?", ctx:"Mach bitte den Herd an!", correct:1,
+    opts:["выключать","включать","открывать","подготавливать"],
+    exp:"'Anmachen' bedeutet включать. In der Küche: den Herd oder Ofen anmachen." },
+  { type:"Grammatik", q:"Wo steht die Vorsilbe bei trennbaren Verben im Hauptsatz?", ctx:"Beispiel: 'aufmachen' → Ich mache die Tür ___.  ", correct:3,
+    opts:["Direkt vor dem Verb","Am Anfang des Satzes","Direkt nach dem Subjekt","Am Ende des Satzes"],
+    exp:"Im Hauptsatz geht die Vorsilbe immer ans Ende: 'Ich mache die Tür auf.'" },
+  { type:"Situation", q:"Du gehst morgen in den Supermarkt. Was fragst du deinen Mitbewohner?", ctx:"Du willst wissen, was er braucht.", correct:0,
+    opts:["Soll ich etwas mitbringen?","Soll ich etwas wegwerfen?","Soll ich etwas zumachen?","Soll ich etwas abschneiden?"],
+    exp:"'Mitbringen' bedeutet приносить (с собой) — Lebensmittel aus dem Supermarkt holen." },
+  { type:"Grammatik", q:"Welcher Satz benutzt 'mitnehmen' richtig?", ctx:"", correct:2,
+    opts:["Ich mitnehme die Pizza.","Ich nehme die Pizza mitnehmen.","Ich nehme die Pizza mit.","Die Pizza mitnehme ich."],
+    exp:"Richtig: 'Ich nehme die Pizza mit.' Die Vorsilbe 'mit-' geht ans Satzende." }
+];
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab-btn").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.querySelectorAll(".tab-pane").forEach(function (p) { p.classList.remove("active"); });
+    document.querySelectorAll(".tab-btn").forEach(function (b) { b.classList.remove("active"); });
+    document.getElementById(btn.getAttribute("data-tab")).classList.add("active");
+    btn.classList.add("active");
+  });
+});
+
+// ── REFERENCE TABLE ───────────────────────────────────────────────────────────
+var tbody = document.getElementById("ref-table-body");
+DATA.forEach(function (v) {
+  var tr = document.createElement("tr");
+  tr.innerHTML = "<td><strong><span class='pfx'>" + v.prefix + "</span>" + v.base + "</strong></td>"
+    + "<td class='pfx'>" + v.prefix + "-</td>"
+    + "<td class='meaning-cell'>" + v.meaning + "</td>"
+    + "<td style='font-style:italic;font-size:.83rem;'>" + v.ex + "</td>";
+  tbody.appendChild(tr);
+});
+
+// ── FLASHCARDS ────────────────────────────────────────────────────────────────
+var cardsCont = document.getElementById("cards-container");
+DATA.forEach(function (v) {
+  var el = document.createElement("div");
+  el.className = "flashcard";
+  el.innerHTML = "<div class='fc-inner'>"
+    + "<div class='fc-front'>"
+    + "<div class='fc-emoji'>" + v.emoji + "</div>"
+    + "<div class='fc-verb'><span class='fc-prefix'>" + v.prefix + "</span>" + v.base + "</div>"
+    + "<div class='fc-flip'>zum Umdrehen klicken</div>"
+    + "</div>"
+    + "<div class='fc-back'>"
+    + "<div class='bk-meaning'>" + v.meaning + "</div>"
+    + "<div class='bk-conj'>" + v.conj + "</div>"
+    + "<div class='bk-example'>" + v.ex + "</div>"
+    + "</div></div>";
+  el.addEventListener("click", function () { el.classList.toggle("flipped"); });
+  cardsCont.appendChild(el);
+});
+
+// ── LÜCKENTEXT ────────────────────────────────────────────────────────────────
+document.getElementById("lt-total").textContent = EXERCISES.length;
+var exCont = document.getElementById("exercises-container");
+
+EXERCISES.forEach(function (ex, idx) {
+  var div = document.createElement("div");
+  div.className = "ex-item";
+  div.id = "ex-" + idx;
+  // Two blanks: verb (v) and prefix (p)
+  div.innerHTML = "<div class='ex-no'>Satz " + (idx + 1) + " von " + EXERCISES.length + "</div>"
+    + "<div class='ex-sent'>"
+    + ex.s1 + " "
+    + "<input class='blank-input wide' id='inv-" + idx + "' type='text' autocomplete='off' spellcheck='false' placeholder='Verb'> "
+    + ex.s2 + " "
+    + "<input class='blank-input' id='inp-" + idx + "' type='text' autocomplete='off' spellcheck='false' placeholder='Vorsilbe'>"
+    + ex.s3
+    + "</div>"
+    + "<div class='ex-hint'>Hilfe: <strong>" + ex.inf + "</strong></div>"
+    + "<div class='ex-fb' id='fb-" + idx + "'></div>";
+  exCont.appendChild(div);
+
+  // Enter key on either input checks the exercise
+  ["inv-" + idx, "inp-" + idx].forEach(function (id) {
+    document.getElementById(id).addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { checkOne(idx); }
+    });
+  });
+});
+
+function normalize(s) { return s.trim().toLowerCase(); }
+
+function checkOne(idx) {
+  var ex   = EXERCISES[idx];
+  var invEl = document.getElementById("inv-" + idx);
+  var inpEl = document.getElementById("inp-" + idx);
+  var fb    = document.getElementById("fb-" + idx);
+  var div   = document.getElementById("ex-" + idx);
+  var vVal  = normalize(invEl.value);
+  var pVal  = normalize(inpEl.value);
+  if (!vVal && !pVal) return;
+
+  var vOk = vVal === normalize(ex.v) || (ex.altV && vVal === normalize(ex.altV));
+  var pOk = pVal === normalize(ex.p);
+
+  invEl.className = "blank-input wide " + (vOk ? "inp-ok" : (vVal ? "inp-no" : ""));
+  inpEl.className = "blank-input "      + (pOk ? "inp-ok" : (pVal ? "inp-no" : ""));
+
+  if (vOk && pOk) {
+    div.className = "ex-item ok";
+    fb.textContent = "✓ Richtig! " + ex.s1 + " " + vVal + " " + ex.s2 + " " + ex.p + ex.s3;
+    fb.className = "ex-fb show ok";
+  } else {
+    div.className = "ex-item no";
+    var hint = "";
+    if (!vOk) hint += "Verb: '" + ex.v + (ex.altV ? " / " + ex.altV : "") + "'  ";
+    if (!pOk) hint += "Vorsilbe: '" + ex.p + "'";
+    fb.textContent = "✗ Falsch. " + hint.trim();
+    fb.className = "ex-fb show no";
+  }
+  updateLTScore();
+}
+
+function updateLTScore() {
+  var score = 0;
+  EXERCISES.forEach(function (ex, idx) {
+    var vOk = normalize(document.getElementById("inv-" + idx).value) === normalize(ex.v);
+    var pOk = normalize(document.getElementById("inp-" + idx).value) === normalize(ex.p);
+    if (vOk && pOk) score++;
+  });
+  document.getElementById("lt-score").textContent = score;
+  document.getElementById("lt-status").textContent = score === EXERCISES.length ? "Perfekt! 🎉" : "Weiter so!";
+}
+
+document.getElementById("btn-check-all").addEventListener("click", function () {
+  EXERCISES.forEach(function (_, idx) { checkOne(idx); });
+});
+document.getElementById("btn-reset-all").addEventListener("click", function () {
+  EXERCISES.forEach(function (_, idx) {
+    document.getElementById("inv-" + idx).value = "";
+    document.getElementById("inp-" + idx).value = "";
+    document.getElementById("inv-" + idx).className = "blank-input wide";
+    document.getElementById("inp-" + idx).className = "blank-input";
+    document.getElementById("fb-" + idx).className = "ex-fb";
+    document.getElementById("fb-" + idx).textContent = "";
+    document.getElementById("ex-" + idx).className = "ex-item";
+  });
+  document.getElementById("lt-score").textContent = "0";
+  document.getElementById("lt-status").textContent = "Zurückgesetzt";
+});
+document.getElementById("btn-show-all").addEventListener("click", function () {
+  EXERCISES.forEach(function (ex, idx) {
+    var invEl = document.getElementById("inv-" + idx);
+    var inpEl = document.getElementById("inp-" + idx);
+    if (!invEl.classList.contains("inp-ok") || !inpEl.classList.contains("inp-ok")) {
+      invEl.value = ex.v;
+      inpEl.value = ex.p;
+      checkOne(idx);
+    }
+  });
+});
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+var qIdx = 0, qScore = 0, shuffledQs = [];
+
+function shuffle(arr) {
+  var a = arr.slice(), i, j, t;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function startQuiz() {
+  shuffledQs = shuffle(QUIZ);
+  qIdx = 0; qScore = 0;
+  document.getElementById("score-screen").classList.remove("show");
+  document.getElementById("quiz-main").style.display = "";
+  renderQ();
+}
+
+function renderQ() {
+  var q = shuffledQs[qIdx];
+  var total = shuffledQs.length;
+  document.getElementById("q-prog-text").textContent = "Frage " + (qIdx + 1) + " / " + total;
+  document.getElementById("q-prog-bar").style.width = (qIdx / total * 100) + "%";
+  document.getElementById("q-score-live").textContent = qScore + " richtig";
+  document.getElementById("q-type").textContent = q.type;
+  document.getElementById("q-text").textContent = q.q;
+  document.getElementById("q-ctx").textContent  = q.ctx;
+  var expEl = document.getElementById("q-explanation");
+  expEl.className   = "q-explanation";
+  expEl.textContent = "";
+  document.getElementById("btn-next").disabled = true;
+
+  var optsCont = document.getElementById("q-options");
+  optsCont.innerHTML = "";
+  var idxArr = shuffle([0, 1, 2, 3]);
+  var correctNew = idxArr.indexOf(q.correct);
+
+  idxArr.forEach(function (origIdx, newIdx) {
+    var btn = document.createElement("button");
+    btn.className   = "opt-btn";
+    btn.textContent = q.opts[origIdx];
+    (function (ni, cn, exp) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".opt-btn").forEach(function (b) { b.disabled = true; });
+        document.querySelectorAll(".opt-btn")[cn].classList.add("opt-correct");
+        var expEl2 = document.getElementById("q-explanation");
+        if (ni === cn) {
+          qScore++;
+          document.querySelectorAll(".opt-btn")[ni].classList.add("opt-correct");
+          expEl2.textContent = "✓ Richtig! " + exp;
+          expEl2.className   = "q-explanation show exp-ok";
+        } else {
+          document.querySelectorAll(".opt-btn")[ni].classList.add("opt-wrong");
+          expEl2.textContent = "✗ Leider falsch. " + exp;
+          expEl2.className   = "q-explanation show exp-no";
+        }
+        document.getElementById("q-score-live").textContent = qScore + " richtig";
+        document.getElementById("btn-next").disabled = false;
+      });
+    })(newIdx, correctNew, q.exp);
+    optsCont.appendChild(btn);
+  });
+}
+
+document.getElementById("btn-next").addEventListener("click", function () {
+  qIdx++;
+  if (qIdx >= shuffledQs.length) { showFinal(); } else { renderQ(); }
+});
+
+function showFinal() {
+  document.getElementById("quiz-main").style.display = "none";
+  var pct = qScore / shuffledQs.length;
+  // Use actual emoji characters — not HTML entities — so textContent works
+  var emoji = pct === 1 ? "🏆" : pct >= 0.8 ? "🎉" : pct >= 0.6 ? "👍" : pct >= 0.4 ? "📚" : "💪";
+  var stars = pct === 1 ? "⭐⭐⭐⭐⭐" : pct >= 0.8 ? "⭐⭐⭐⭐" : pct >= 0.6 ? "⭐⭐⭐" : pct >= 0.4 ? "⭐⭐" : "⭐";
+  var msg   = pct === 1   ? "Ausgezeichnet! Du hast alles richtig!"
+            : pct >= 0.8  ? "Sehr gut! Fast perfekt!"
+            : pct >= 0.6  ? "Gut gemacht! Noch ein bisschen üben!"
+            : pct >= 0.4  ? "Weiter üben – du schaffst das!"
+            :               "Nicht aufgeben – Übung macht den Meister!";
+  document.getElementById("final-emoji").textContent = emoji;
+  document.getElementById("final-num").textContent   = qScore;
+  document.getElementById("final-stars").textContent = stars;
+  document.getElementById("final-msg").textContent   = msg;
+  document.getElementById("score-screen").classList.add("show");
+}
+
+document.getElementById("btn-restart").addEventListener("click", startQuiz);
+startQuiz();
+
+})();
+</script>
+</body>
+</html>
